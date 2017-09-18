@@ -431,7 +431,7 @@
                         }
                     }
                     if (type === 'incoming') {
-                        var readReceipt = Whisper.ReadReceipts.forMessage(message);
+                        var readReceipt = Whisper.ReadSyncs.forMessage(message);
                         if (readReceipt) {
                             if (message.get('expireTimer') && !message.get('expirationStartTimestamp')) {
                                 message.set('expirationStartTimestamp', readReceipt.get('read_at'));
@@ -442,7 +442,7 @@
                             // This is primarily to allow the conversation to mark all older messages as
                             //   read, as is done when we receive a read receipt for a message we already
                             //   know about.
-                            Whisper.ReadReceipts.notifyConversation(message);
+                            Whisper.ReadSyncs.notifyConversation(message);
                         } else {
                             conversation.set('unreadCount', conversation.get('unreadCount') + 1);
                         }
