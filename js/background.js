@@ -178,7 +178,7 @@
         messageReceiver.addEventListener('contact', onContactReceived);
         messageReceiver.addEventListener('group', onGroupReceived);
         messageReceiver.addEventListener('sent', onSentMessage);
-        messageReceiver.addEventListener('read', onReadReceipt);
+        messageReceiver.addEventListener('readSync', onReadSync);
         messageReceiver.addEventListener('verified', onVerified);
         messageReceiver.addEventListener('error', onError);
         messageReceiver.addEventListener('empty', onEmpty);
@@ -510,7 +510,7 @@
         throw error;
     }
 
-    function onReadReceipt(ev) {
+    function onReadSync(ev) {
         var read_at   = ev.timestamp;
         var timestamp = ev.read.timestamp;
         var sender    = ev.read.sender;
