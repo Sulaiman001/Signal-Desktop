@@ -487,10 +487,39 @@ MessageReceiver.prototype.extend({
             return this.handleDataMessage(envelope, content.dataMessage);
         } else if (content.nullMessage) {
             return this.handleNullMessage(envelope, content.nullMessage);
+        } else if (content.receiptMessage) {
+            return this.handleReceiptMessage(envelope, content.receiptMessage);
         } else {
             this.removeFromCache(envelope);
             throw new Error('Unsupported content message');
         }
+    },
+    handleReceiptMessage: function(envelope, receiptMessage) {
+        var results = [];
+        if (receiptMessage.type === textsecure.protobuf.ReceiptMessage.Type.DELIVERY) {
+            for (var i = 0; i < receiptMessage.timestamps.length; ++i) {
+                var ev = new Event('delivery');
+                ev.confirm = this.removeFromCache.bind(this, envelope);
+                ev.deliveryReceipt = {
+                  timestamp    : receiptMessage.timestamps[i].toNumber(),
+                  source       : envelope.source,
+                  sourceDevice : envelope.sourceDevice
+                };
+                results.push(this.dispatchAndWait(ev));
+            }
+        } else if (receiptMessage.type === textsecure.protobuf.ReceiptMessage.Type.READ) {
+            for (var i = 0; i < receiptMessage.timestamps.length; ++i) {
+                var ev = new Event('read');
+                ev.confirm = this.removeFromCache.bind(this, envelope);
+                ev.timestamp = envelope.timestamp.toNumber();
+                ev.read = {
+                    timestamp : receiptMessage.timestamps[i].toNumber(),
+                    reader    : envelope.source
+                }
+                results.push(this.dispatchAndWait(ev));
+            }
+        }
+        return Promise.all(results);
     },
     handleNullMessage: function(envelope, nullMessage) {
         console.log('null message from', this.getEnvelopeId(envelope));
