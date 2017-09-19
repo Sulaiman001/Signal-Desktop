@@ -65,8 +65,8 @@
             if (receipts.length) {
                 console.log('Found early read receipts for message');
                 this.remove(receipts);
-                return receipts;
             }
+            return receipts;
         },
         onReceipt: function(receipt) {
             var messages  = new Whisper.MessageCollection();
