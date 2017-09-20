@@ -24,8 +24,11 @@ var TextSecureServer = (function() {
         return true;
     }
 
-    function createSocket(url) {
-      var requestOptions = { ca: window.config.certificateAuthorities };
+    function createSocket(url, agent) {
+      var requestOptions = {
+        ca: window.config.certificateAuthorities,
+        agent: agent
+      };
       return new nodeWebSocket(url, null, null, null, requestOptions);
     }
 
@@ -143,6 +146,9 @@ var TextSecureServer = (function() {
         this.cdn_url = cdn_url;
         this.username = username;
         this.password = password;
+
+        // Necessary to keep websockets and http requests in separate socket pools
+        this.socketAgent = new window.Agent();
     }
 
     TextSecureServer.prototype = {

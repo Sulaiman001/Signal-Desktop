@@ -37666,8 +37666,11 @@ var TextSecureServer = (function() {
         return true;
     }
 
-    function createSocket(url) {
-      var requestOptions = { ca: window.config.certificateAuthorities };
+    function createSocket(url, agent) {
+      var requestOptions = {
+        ca: window.config.certificateAuthorities,
+        // agent: agent
+      };
       return new nodeWebSocket(url, null, null, null, requestOptions);
     }
 
@@ -37785,6 +37788,9 @@ var TextSecureServer = (function() {
         this.cdn_url = cdn_url;
         this.username = username;
         this.password = password;
+
+        // Necessary to keep websockets and http requests in separate socket pools
+        this.socketAgent = new window.Agent();
     }
 
     TextSecureServer.prototype = {
@@ -39184,7 +39190,11 @@ textsecure.MessageReceiver = function(url, username, password, signalingKey) {
     this.removeEventListener = messageReceiver.removeEventListener.bind(messageReceiver);
     this.getStatus           = messageReceiver.getStatus.bind(messageReceiver);
     this.close               = messageReceiver.close.bind(messageReceiver);
-    messageReceiver.connect();
+    // messageReceiver.connect();
+
+    // testing AJAX-then-websocket scenario:
+    messageReceiver.server.getDevices(messageReceiver.number)
+        .then(messageReceiver.connect.bind(messageReceiver))
 
     textsecure.replay.registerFunction(messageReceiver.tryMessageAgain.bind(messageReceiver), textsecure.replay.Type.INIT_SESSION);
 };
