@@ -148,7 +148,9 @@ var TextSecureServer = (function() {
         this.password = password;
 
         // Necessary to keep websockets and http requests in separate socket pools
-        this.socketAgent = new window.Agent();
+        this.socketAgent = new window.Agent({
+            keepAlive: true
+        });
     }
 
     TextSecureServer.prototype = {
