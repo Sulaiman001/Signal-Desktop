@@ -37669,7 +37669,7 @@ var TextSecureServer = (function() {
     function createSocket(url, agent) {
       var requestOptions = {
         ca: window.config.certificateAuthorities,
-        // agent: agent
+        agent: agent
       };
       return new nodeWebSocket(url, null, null, null, requestOptions);
     }
@@ -38033,12 +38033,12 @@ var TextSecureServer = (function() {
             return createSocket(this.url.replace('https://', 'wss://').replace('http://', 'ws://')
                     + '/v1/websocket/?login=' + encodeURIComponent(this.username)
                     + '&password=' + encodeURIComponent(this.password)
-                    + '&agent=OWD');
+                    + '&agent=OWD', this.socketAgent);
         },
         getProvisioningSocket: function () {
             console.log('opening provisioning socket', this.url);
             return createSocket(this.url.replace('https://', 'wss://').replace('http://', 'ws://')
-                    + '/v1/websocket/provisioning/?agent=OWD');
+                    + '/v1/websocket/provisioning/?agent=OWD', this.socketAgent);
         }
     };
 
