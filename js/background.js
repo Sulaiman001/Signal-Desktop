@@ -43,6 +43,7 @@
             accountManager.addEventListener('registration', function() {
                 if (!Whisper.Registration.everDone()) {
                     storage.put('safety-numbers-approval', false);
+                    storage.put('read-receipt-setting', true);
                 }
                 Whisper.Registration.markDone();
                 console.log("dispatching registration event");
